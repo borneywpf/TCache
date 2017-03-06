@@ -35,9 +35,6 @@ class FileManager {
     public void writeBytes(File file, byte[] content) {
         checkNotNull(file);
         checkNotNull(content);
-        if (file.exists()) {
-            throw new RuntimeException("error:file is exists");
-        }
         try (FileOutputStream fos = new FileOutputStream(file)) {
             ByteBuffer buffer = ByteBuffer.allocate(1024);
             FileChannel channel = fos.getChannel();
@@ -58,7 +55,7 @@ class FileManager {
     public byte[] readBytes(File file) {
         checkNotNull(file);
         if (!file.exists()) {
-            throw new RuntimeException("error:file not exists");
+            return null;
         }
         try (FileInputStream fis = new FileInputStream(file)) {
             FileChannel fisChannel = fis.getChannel();
@@ -98,7 +95,11 @@ class FileManager {
      * return a Serializable {@link Serializable} object by file content
      */
     public <T extends Serializable> T readSerializable(File file) throws ClassCastException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(readBytes(file));
+        byte[] bytes = readBytes(file);
+        if (bytes == null) {
+            return null;
+        }
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         try (ObjectInput in = new ObjectInputStream(bis)) {
             return (T) in.readObject();
         } catch (ClassNotFoundException e) {
@@ -117,12 +118,12 @@ class FileManager {
         Parcel parcel = Parcel.obtain();
         try {
             object.writeToParcel(parcel, 0);
-            writeBytes(file, parcel.marshall());
+            byte[] marshall = parcel.createByteArray();
+            writeBytes(file, marshall);
         } finally {
             parcel.recycle();
         }
     }
-
 
     /**
      * return a Parcelable {@link Parcelable} object by file content
@@ -132,6 +133,9 @@ class FileManager {
         Parcel parcel = Parcel.obtain();
         try {
             byte[] bytes = readBytes(file);
+            if (bytes == null) {
+                return null;
+            }
             parcel.unmarshall(bytes, 0, bytes.length);
             parcel.setDataPosition(0);
             return creator.createFromParcel(parcel);
@@ -157,5 +161,17 @@ class FileManager {
             throw new NullPointerException("error:object is null");
         }
         return object;
+    }
+
+    static class SerializableWrapper<T> implements Serializable {
+        T obj;
+
+        public T getObj() {
+            return obj;
+        }
+
+        public void setObj(T obj) {
+            this.obj = obj;
+        }
     }
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:hint="存储数据的key"/>
+
+    <EditText
+        android:id="@+id/data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="4"
+        android:hint="请输入要缓存的Serializable数据,String既是Serializable对象"/>
+
+    <Button
+        android:id="@+id/put"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="存储"/>
+
+    <Button
+        android:id="@+id/get"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取缓存"/>
+
+    <TextView
+        android:id="@+id/cachedata"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="缓存的内容"/>
+
+    <Button
+        android:id="@+id/expired"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="key对应的缓存是否过期"/>
+
+    <Button
+        android:id="@+id/evict"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="清除key对应的缓存"/>
+</LinearLayout>

@@ -221,7 +221,9 @@ class DiskCacheManager implements CacheManager {
         }
 
         public <T extends Serializable> void putSerializable(T obj) {
-            fileManager.writeSerializable(file, obj);
+            FileManager.SerializableWrapper<T> s = new FileManager.SerializableWrapper<>();
+            s.setObj(obj);
+            fileManager.writeSerializable(file, s);
         }
 
         public <T extends Serializable> T getSerializable() {

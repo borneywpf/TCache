@@ -26,21 +26,21 @@ public class TCache implements CacheManager {
     private TCache() {
     }
 
-    public static CacheManager get(Context context) {
+    public static TCache get(Context context) {
         return get(context, "tcache");
     }
 
-    public static CacheManager get(Context context, String relativeCacheDir) {
+    public static TCache get(Context context, String relativeCacheDir) {
         return get(context, relativeCacheDir, DEFAULT_MAX_DISK_FILE_COUNT, DEFAULT_MAX_DISK_SPACE);
     }
 
-    public static CacheManager get(Context context, String relativeCacheDir, int maxDiskTotalCount,
+    public static TCache get(Context context, String relativeCacheDir, int maxDiskTotalCount,
             int maxDiskTotalSpace) {
         return get(context, relativeCacheDir, maxDiskTotalCount, maxDiskTotalSpace,
                 Integer.MAX_VALUE);
     }
 
-    public static CacheManager get(Context context, String relativeCacheDir, int maxDiskTotalCount,
+    public static TCache get(Context context, String relativeCacheDir, int maxDiskTotalCount,
             int maxDiskTotalSpace, int defCacheAge) {
         if (context == null) {
             throw new NullPointerException("context is null");
@@ -51,7 +51,7 @@ public class TCache implements CacheManager {
                 defCacheAge);
     }
 
-    private static CacheManager getCacheManager(String cacheDir,
+    private static TCache getCacheManager(String cacheDir,
             int maxDiskTotalCount, int maxDiskTotalSpace, int defCacheAge) {
         TCache cache = getTCache(cacheDir);
         cache.cacheDir = cacheDir;
@@ -83,6 +83,7 @@ public class TCache implements CacheManager {
         }
         String k = absoluteKey(key);
         diskCacheManager.put(k, obj);
+        memoryCacheManager.evictAll();
         memoryCacheManager.put(k, obj);
     }
 
@@ -104,6 +105,7 @@ public class TCache implements CacheManager {
         }
         String k = absoluteKey(key);
         diskCacheManager.put(k, obj);
+        memoryCacheManager.evictAll();
         memoryCacheManager.put(k, obj);
     }
 

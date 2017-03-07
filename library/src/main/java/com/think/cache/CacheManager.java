@@ -26,7 +26,19 @@ public interface CacheManager extends Cache {
      */
     <T extends Bitmap> T getBitmap(String key);
 
+    /**
+     *
+     * @param key
+     * @param obj
+     * @param <T>
+     */
     <T extends Serializable> void putSerializable(String key, T obj);
 
+    /**
+     *
+     * @param key
+     * @param <T>
+     * @return
+     */
     <T extends Serializable> T getSerializable(String key);
 }

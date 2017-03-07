@@ -95,7 +95,7 @@ public class StringFragment extends Fragment implements View.OnClickListener {
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
                 String key = mKey.getText().toString();
                 String data = mData.getText().toString();
-                mTCache.put(key, data);
+                mTCache.putSerializable(key, data);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
@@ -105,7 +105,7 @@ public class StringFragment extends Fragment implements View.OnClickListener {
 
     private void get() {
         String key = mKey.getText().toString();
-        String cacheData = mTCache.get(key);
+        String cacheData = mTCache.getSerializable(key);
         mCacheData.setText(cacheData);
     }
 }

@@ -100,7 +100,7 @@ public class BitmapFragment extends Fragment implements View.OnClickListener {
                     String key = mKey.getText().toString();
                     Bitmap bitmap = BitmapFactory.decodeStream(getContext().getAssets().open("timg.jpg"));
                     Log.d(TAG, "bitmap = " + bitmap);
-                    mTCache.put(key, bitmap);
+                    mTCache.putBitmap(key, bitmap);
                     e.onComplete();
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -113,7 +113,7 @@ public class BitmapFragment extends Fragment implements View.OnClickListener {
 
     private void get() {
         String key = mKey.getText().toString();
-        Bitmap cacheData = mTCache.get(key);
+        Bitmap cacheData = mTCache.getBitmap(key);
         mCacheData.setImageBitmap(cacheData);
     }
 }

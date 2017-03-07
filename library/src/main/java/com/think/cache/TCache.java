@@ -1,10 +1,12 @@
 package com.think.cache;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Looper;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,8 +19,8 @@ public class TCache implements CacheManager {
     private static final int DEFAULT_MAX_DISK_SPACE = 50 * 1024 * 1024;
     private static final int DEFAULT_MAX_DISK_FILE_COUNT = 500;
     private String cacheDir;
-    private CacheManager diskCacheManager;
-    private CacheManager memoryCacheManager;
+    private Cache diskCacheManager;
+    private Cache memoryCacheManager;
     private final static Map<String, TCache> T_CACHE_MAP = new ConcurrentHashMap<>();
 
     private TCache() {
@@ -75,23 +77,43 @@ public class TCache implements CacheManager {
     }
 
     @Override
-    public synchronized <T> void put(String key, T obj) {
+    public <T extends Bitmap> void putBitmap(String key, T bitmap) {
+        putByteMapper(key, bitmap, new BitmapByteMapper<T>());
+    }
+
+    @Override
+    public <T extends Bitmap> T getBitmap(String key) {
+        return getByteMapper(key, new BitmapByteMapper<T>());
+    }
+
+    @Override
+    public <T extends Serializable> void putSerializable(String key, T obj) {
+        putByteMapper(key, obj, new SerializableByteMapper<T>());
+    }
+
+    @Override
+    public <T extends Serializable> T getSerializable(String key) {
+        return getByteMapper(key, new SerializableByteMapper<T>());
+    }
+
+    @Override
+    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("Can not operate in the main thread !!!");
         }
         String k = absoluteKey(key);
-        diskCacheManager.put(k, obj);
+        diskCacheManager.putByteMapper(k, obj, mapper);
         memoryCacheManager.evictAll();
-        memoryCacheManager.put(k, obj);
+        memoryCacheManager.putByteMapper(k, obj, mapper);
     }
 
     @Override
-    public synchronized <T> T get(String key) {
+    public <T> T getByteMapper(String key, ByteMapper<T> mapper) {
         String k = absoluteKey(key);
-        T obj = memoryCacheManager.get(k);
+        T obj = memoryCacheManager.getByteMapper(k, mapper);
         if (obj == null) {
-            obj = diskCacheManager.get(k);
-            memoryCacheManager.put(k, obj);
+            obj = diskCacheManager.getByteMapper(k, mapper);
+            memoryCacheManager.putByteMapper(k, obj, mapper);
         }
         return obj;
     }

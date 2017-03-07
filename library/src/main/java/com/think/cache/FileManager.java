@@ -1,20 +1,16 @@
 package com.think.cache;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by borney on 2/27/17.
@@ -33,6 +29,7 @@ class FileManager {
     public void writeBytes(File file, byte[] content) {
         checkNotNull(file);
         checkNotNull(content);
+        Log.d("TCache", "content:" + content.length);
         try (FileOutputStream fos = new FileOutputStream(file)) {
             ByteBuffer buffer = ByteBuffer.allocate(1024);
             FileChannel channel = fos.getChannel();
@@ -74,40 +71,6 @@ class FileManager {
         return null;
     }
 
-    /**
-     * write Serializable {@link Serializable} object to file
-     */
-    public <T extends Serializable> void writeSerializable(File file, T object) {
-        checkNotNull(object);
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutput out = new ObjectOutputStream(bos)) {
-            out.writeObject(object);
-            out.flush();
-            writeBytes(file, bos.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * return a Serializable {@link Serializable} object by file content
-     */
-    public <T extends Serializable> T readSerializable(File file) throws ClassCastException {
-        byte[] bytes = readBytes(file);
-        if (bytes == null) {
-            return null;
-        }
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        try (ObjectInput in = new ObjectInputStream(bis)) {
-            return (T) in.readObject();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public void deleFile(File file) {
         checkNotNull(file);
         if (file.isDirectory()) {
@@ -120,22 +83,35 @@ class FileManager {
         file.delete();
     }
 
+    public long calFileSize(File file) {
+        return file.length();
+    }
+
+    public int calFileCount(File file) {
+        return allFiles(file).size();
+    }
+
+    public List<File> allFiles(File file) {
+        ArrayList<File> files = new ArrayList<>();
+        allFiles(file, files);
+        return files;
+    }
+
+    private void allFiles(File file, List<File> files) {
+        if (file.isDirectory()) {
+            File[] listFiles = file.listFiles();
+            for (File f : listFiles) {
+                allFiles(f, files);
+            }
+        } else {
+            files.add(file);
+        }
+    }
+
     private Object checkNotNull(Object object) {
         if (object == null) {
             throw new NullPointerException("error:object is null");
         }
         return object;
-    }
-
-    static class SerializableWrapper<T> implements Serializable {
-        private T obj;
-
-        public T getObj() {
-            return obj;
-        }
-
-        public void setObj(T obj) {
-            this.obj = obj;
-        }
     }
 }

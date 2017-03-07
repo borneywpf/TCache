@@ -7,21 +7,21 @@ import android.util.ArrayMap;
  * Created by borney on 3/1/17.
  */
 @SuppressLint("NewApi")
-class MemoryCacheManager implements CacheManager {
-    private ArrayMap<String, Object> objectMap;
+class MemoryCacheManager implements Cache {
+    private ArrayMap<String, byte[]> bytesMap;
 
     MemoryCacheManager() {
-        objectMap = new ArrayMap<>();
+        bytesMap = new ArrayMap<>();
     }
 
     @Override
-    public <T> void put(String key, T obj) {
-        objectMap.put(key, obj);
+    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
+        bytesMap.put(key, mapper.getBytes(obj));
     }
 
     @Override
-    public <T> T get(String key) {
-        return (T) objectMap.get(key);
+    public <T> T getByteMapper(String key, ByteMapper<T> mapper) {
+        return mapper.getObject(bytesMap.get(key));
     }
 
     @Override
@@ -36,13 +36,13 @@ class MemoryCacheManager implements CacheManager {
 
     @Override
     public void evict(String key) {
-        if (objectMap.containsKey(key)) {
-            objectMap.remove(key);
+        if (bytesMap.containsKey(key)) {
+            bytesMap.remove(key);
         }
     }
 
     @Override
     public void evictAll() {
-        objectMap.clear();
+        bytesMap.clear();
     }
 }

@@ -2,20 +2,14 @@ package com.think.cache;
 
 import android.annotation.SuppressLint;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by borney on 3/1/17.
  */
 @SuppressLint("NewApi")
-class DiskCacheManager implements CacheManager {
+class DiskCacheManager implements Cache {
     private FileManager fileManager;
     private String cacheDir;
     private int maxCount;
@@ -32,32 +26,29 @@ class DiskCacheManager implements CacheManager {
     }
 
     @Override
-    public <T> void put(String key, T obj) {
-        //create wrapper serializable
-        FileManager.SerializableWrapper<T> wrapper = new FileManager.SerializableWrapper<>();
-        wrapper.setObj(obj);
-
+    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
         //ensure total file count and space
+        byte[] bytes = mapper.getBytes(obj);
         ensureTotalCount();
-        ensureTotalSpace(wrapper);
+        ensureTotalSpace(bytes);
 
         //create cache file
         File file = buildFile(key);
         createNotExistsParent(file);
 
         //write data to cache file
-        fileManager.writeSerializable(file, wrapper);
+        fileManager.writeBytes(file, bytes);
 
         //update file and it's parent list modify time
         updateLastModified(file, System.currentTimeMillis());
     }
 
     @Override
-    public <T> T get(String key) {
+    public <T> T getByteMapper(String key, ByteMapper<T> mapper) {
         File file = buildFile(key);
 
-        FileManager.SerializableWrapper<T> wrapper = fileManager.readSerializable(file);
-        return wrapper.getObj();
+        byte[] bytes = fileManager.readBytes(file);
+        return mapper.getObject(bytes);
     }
 
     @Override
@@ -82,10 +73,10 @@ class DiskCacheManager implements CacheManager {
         fileManager.deleFile(new File(cacheDir));
     }
 
-    private void ensureTotalSpace(Serializable o) {
-        int objSize = serializableSize(o);
+    private void ensureTotalSpace(byte[] bytes) {
+        int objSize = bytes.length;
         File file = new File(cacheDir);
-        long cacheSize = calFileSize(file);
+        long cacheSize = fileManager.calFileSize(file);
         while (cacheSize + objSize > maxSpace) {
             long removeSize = removeLastModifiedFile(file);
             cacheSize -= removeSize;
@@ -94,7 +85,7 @@ class DiskCacheManager implements CacheManager {
 
     private void ensureTotalCount() {
         File file = new File(cacheDir);
-        int size = calFileCount(file);
+        int size = fileManager.calFileCount(file);
         while (size > maxCount) {
             removeLastModifiedFile(file);
             size--;
@@ -120,33 +111,8 @@ class DiskCacheManager implements CacheManager {
         updateLastModified(file.getParentFile(), time);
     }
 
-    private long calFileSize(File file) {
-        return file.length();
-    }
-
-    private int calFileCount(File file) {
-        return allFiles(file).size();
-    }
-
-    private List<File> allFiles(File file) {
-        ArrayList<File> files = new ArrayList<>();
-        allFiles(file, files);
-        return files;
-    }
-
-    private void allFiles(File file, List<File> files) {
-        if (file.isDirectory()) {
-            File[] listFiles = file.listFiles();
-            for (File f : listFiles) {
-                allFiles(f, files);
-            }
-        } else {
-            files.add(file);
-        }
-    }
-
     private long removeLastModifiedFile(File parent) {
-        List<File> files = allFiles(parent);
+        List<File> files = fileManager.allFiles(parent);
         if (!files.isEmpty()) {
             File lastModifyFile = files.get(0);
             long removedSize = lastModifyFile.length();
@@ -158,17 +124,6 @@ class DiskCacheManager implements CacheManager {
             }
             lastModifyFile.delete();
             return removedSize;
-        }
-        return 0;
-    }
-
-    private int serializableSize(Serializable obj) {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutput out = new ObjectOutputStream(bos)) {
-            out.writeObject(obj);
-            return bos.size();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return 0;
     }

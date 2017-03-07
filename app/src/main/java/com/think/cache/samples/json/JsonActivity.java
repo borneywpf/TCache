@@ -1,4 +1,4 @@
-package com.think.cache.samples.serializable;
+package com.think.cache.samples.json;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,22 +13,22 @@ import com.think.cache.samples.R;
  * Created by borney on 3/6/17.
  */
 
-public class SerializableActivity extends AppCompatActivity {
+public class JsonActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_serializable);
+        setContentView(R.layout.activity_json);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(false);
 
-        SerializableFragment tasksFragment =
-                (SerializableFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        JsonFragment tasksFragment =
+                (JsonFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
             // Create the fragment
-            tasksFragment = SerializableFragment.instance();
+            tasksFragment = JsonFragment.instance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.contentFrame, tasksFragment);
             transaction.commit();

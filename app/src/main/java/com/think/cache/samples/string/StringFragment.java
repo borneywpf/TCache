@@ -1,23 +1,18 @@
-package com.think.cache.samples.parcelable;
+package com.think.cache.samples.string;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.think.cache.TCache;
 import com.think.cache.samples.R;
 import com.think.cache.samples.ToastUtils;
-
-import java.io.IOException;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -29,14 +24,15 @@ import io.reactivex.schedulers.Schedulers;
  * Created by borney on 3/6/17.
  */
 
-public class ParcelableFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "TCache";
+public class StringFragment extends Fragment implements View.OnClickListener {
     private EditText mKey;
-    private ImageView mCacheData;
+    private EditText mData;
+    private TextView mCacheData;
+
     private TCache mTCache;
 
-    public static ParcelableFragment instance() {
-        ParcelableFragment fragment = new ParcelableFragment();
+    public static StringFragment instance() {
+        StringFragment fragment = new StringFragment();
         return fragment;
     }
 
@@ -50,11 +46,12 @@ public class ParcelableFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_parcelable, container, false);
+        View v = inflater.inflate(R.layout.fragment_string, container, false);
         mKey = (EditText) v.findViewById(R.id.key);
+        mData = (EditText) v.findViewById(R.id.data);
         v.findViewById(R.id.put).setOnClickListener(this);
         v.findViewById(R.id.get).setOnClickListener(this);
-        mCacheData = (ImageView) v.findViewById(R.id.cachedata);
+        mCacheData = (TextView) v.findViewById(R.id.cachedata);
         v.findViewById(R.id.expired).setOnClickListener(this);
         v.findViewById(R.id.evict).setOnClickListener(this);
         return v;
@@ -96,15 +93,10 @@ public class ParcelableFragment extends Fragment implements View.OnClickListener
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
-                try {
-                    String key = mKey.getText().toString();
-                    Bitmap bitmap = BitmapFactory.decodeStream(getContext().getAssets().open("timg.jpg"));
-                    Log.d(TAG, "bitmap = " + bitmap);
-                    mTCache.put(key, bitmap);
-                    e.onComplete();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                String key = mKey.getText().toString();
+                String data = mData.getText().toString();
+                mTCache.put(key, data);
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -113,7 +105,7 @@ public class ParcelableFragment extends Fragment implements View.OnClickListener
 
     private void get() {
         String key = mKey.getText().toString();
-        Bitmap cacheData = mTCache.get(key, Bitmap.CREATOR);
-        mCacheData.setImageBitmap(cacheData);
+        String cacheData = mTCache.get(key);
+        mCacheData.setText(cacheData);
     }
 }

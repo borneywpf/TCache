@@ -1,8 +1,6 @@
 package com.think.cache;
 
 import android.annotation.SuppressLint;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -110,40 +108,6 @@ class FileManager {
         return null;
     }
 
-    /**
-     * write a Parcelable {@link Parcelable} object to file
-     */
-    public <T extends Parcelable> void writeParcelable(File file, T object) {
-        checkNotNull(object);
-        Parcel parcel = Parcel.obtain();
-        try {
-            object.writeToParcel(parcel, 0);
-            byte[] marshall = parcel.createByteArray();
-            writeBytes(file, marshall);
-        } finally {
-            parcel.recycle();
-        }
-    }
-
-    /**
-     * return a Parcelable {@link Parcelable} object by file content
-     */
-    public <T extends Parcelable> T readParcelable(File file, Parcelable.Creator<T> creator) {
-        checkNotNull(creator);
-        Parcel parcel = Parcel.obtain();
-        try {
-            byte[] bytes = readBytes(file);
-            if (bytes == null) {
-                return null;
-            }
-            parcel.unmarshall(bytes, 0, bytes.length);
-            parcel.setDataPosition(0);
-            return creator.createFromParcel(parcel);
-        } finally {
-            parcel.recycle();
-        }
-    }
-
     public void deleFile(File file) {
         checkNotNull(file);
         if (file.isDirectory()) {
@@ -164,7 +128,7 @@ class FileManager {
     }
 
     static class SerializableWrapper<T> implements Serializable {
-        T obj;
+        private T obj;
 
         public T getObj() {
             return obj;

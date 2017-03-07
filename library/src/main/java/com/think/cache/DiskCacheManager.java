@@ -1,8 +1,6 @@
 package com.think.cache;
 
 import android.annotation.SuppressLint;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,53 +32,32 @@ class DiskCacheManager implements CacheManager {
     }
 
     @Override
-    public <T extends Serializable> void put(String key, T obj) {
+    public <T> void put(String key, T obj) {
+        //create wrapper serializable
+        FileManager.SerializableWrapper<T> wrapper = new FileManager.SerializableWrapper<>();
+        wrapper.setObj(obj);
+
         //ensure total file count and space
         ensureTotalCount();
-        ensureTotalSpace(obj);
+        ensureTotalSpace(wrapper);
 
         //create cache file
         File file = buildFile(key);
         createNotExistsParent(file);
 
         //write data to cache file
-        DiskCache cache = new DiskCache(fileManager, file);
-        cache.putSerializable(obj);
+        fileManager.writeSerializable(file, wrapper);
 
         //update file and it's parent list modify time
         updateLastModified(file, System.currentTimeMillis());
     }
 
     @Override
-    public <T extends Serializable> T get(String key) {
+    public <T> T get(String key) {
         File file = buildFile(key);
-        DiskCache cache = new DiskCache(fileManager, file);
-        return cache.getSerializable();
-    }
 
-    @Override
-    public <T extends Parcelable> void put(String key, T obj) {
-        //ensure total file count and space
-        ensureTotalCount();
-        ensureTotalSpace(obj);
-
-        //create cache file
-        File file = buildFile(key);
-        createNotExistsParent(file);
-
-        //write data to cache file
-        DiskCache cache = new DiskCache(fileManager, file);
-        cache.putParcelable(obj);
-
-        //update file and it's parent list modify time
-        updateLastModified(file, System.currentTimeMillis());
-    }
-
-    @Override
-    public <T extends Parcelable> T get(String key, Parcelable.Creator<T> create) {
-        File file = buildFile(key);
-        DiskCache cache = new DiskCache(fileManager, file);
-        return cache.getParcelable(create);
+        FileManager.SerializableWrapper<T> wrapper = fileManager.readSerializable(file);
+        return wrapper.getObj();
     }
 
     @Override
@@ -105,13 +82,8 @@ class DiskCacheManager implements CacheManager {
         fileManager.deleFile(new File(cacheDir));
     }
 
-    private void ensureTotalSpace(Object o) {
-        int objSize;
-        if (o instanceof Serializable) {
-            objSize = serializableSize((Serializable) o);
-        } else {
-            objSize = parcelableSize((Parcelable) o);
-        }
+    private void ensureTotalSpace(Serializable o) {
+        int objSize = serializableSize(o);
         File file = new File(cacheDir);
         long cacheSize = calFileSize(file);
         while (cacheSize + objSize > maxSpace) {
@@ -199,43 +171,5 @@ class DiskCacheManager implements CacheManager {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    private int parcelableSize(Parcelable obj) {
-        Parcel parcel = Parcel.obtain();
-        try {
-            obj.writeToParcel(parcel, 0);
-            return parcel.dataSize();
-        } finally {
-            parcel.recycle();
-        }
-    }
-
-    private static class DiskCache {
-        private FileManager fileManager;
-        private File file;
-
-        DiskCache(FileManager manager, File file) {
-            this.fileManager = manager;
-            this.file = file;
-        }
-
-        public <T extends Serializable> void putSerializable(T obj) {
-            FileManager.SerializableWrapper<T> s = new FileManager.SerializableWrapper<>();
-            s.setObj(obj);
-            fileManager.writeSerializable(file, s);
-        }
-
-        public <T extends Serializable> T getSerializable() {
-            return fileManager.readSerializable(file);
-        }
-
-        public <T extends Parcelable> void putParcelable(T obj) {
-            fileManager.writeParcelable(file, obj);
-        }
-
-        public <T extends Parcelable> T getParcelable(Parcelable.Creator<T> creator) {
-            return fileManager.readParcelable(file, creator);
-        }
     }
 }

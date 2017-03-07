@@ -2,11 +2,9 @@ package com.think.cache;
 
 import android.content.Context;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.text.TextUtils;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,7 +75,7 @@ public class TCache implements CacheManager {
     }
 
     @Override
-    public synchronized <T extends Serializable> void put(String key, T obj) {
+    public synchronized <T> void put(String key, T obj) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("Can not operate in the main thread !!!");
         }
@@ -88,33 +86,11 @@ public class TCache implements CacheManager {
     }
 
     @Override
-    public synchronized <T extends Serializable> T get(String key) {
+    public synchronized <T> T get(String key) {
         String k = absoluteKey(key);
         T obj = memoryCacheManager.get(k);
         if (obj == null) {
             obj = diskCacheManager.get(k);
-            memoryCacheManager.put(k, obj);
-        }
-        return obj;
-    }
-
-    @Override
-    public synchronized <T extends Parcelable> void put(String key, T obj) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            throw new RuntimeException("Can not operate in the main thread !!!");
-        }
-        String k = absoluteKey(key);
-        diskCacheManager.put(k, obj);
-        memoryCacheManager.evictAll();
-        memoryCacheManager.put(k, obj);
-    }
-
-    @Override
-    public synchronized <T extends Parcelable> T get(String key, Parcelable.Creator<T> create) {
-        String k = absoluteKey(key);
-        T obj = memoryCacheManager.get(k, create);
-        if (obj == null) {
-            obj = diskCacheManager.get(k, create);
             memoryCacheManager.put(k, obj);
         }
         return obj;

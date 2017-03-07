@@ -1,42 +1,27 @@
 package com.think.cache;
 
 import android.annotation.SuppressLint;
-import android.os.Parcelable;
 import android.util.ArrayMap;
-
-import java.io.Serializable;
 
 /**
  * Created by borney on 3/1/17.
  */
 @SuppressLint("NewApi")
 class MemoryCacheManager implements CacheManager {
-    private ArrayMap<String, Serializable> serializableMap;
-    private ArrayMap<String, Parcelable> parcelableMap;
+    private ArrayMap<String, Object> objectMap;
 
     MemoryCacheManager() {
-        serializableMap = new ArrayMap<>();
-        parcelableMap = new ArrayMap<>();
+        objectMap = new ArrayMap<>();
     }
 
     @Override
-    public <T extends Serializable> void put(String key, T obj) {
-        serializableMap.put(key, obj);
+    public <T> void put(String key, T obj) {
+        objectMap.put(key, obj);
     }
 
     @Override
-    public <T extends Serializable> T get(String key) {
-        return (T) serializableMap.get(key);
-    }
-
-    @Override
-    public <T extends Parcelable> void put(String key, T obj) {
-        parcelableMap.put(key, obj);
-    }
-
-    @Override
-    public <T extends Parcelable> T get(String key, Parcelable.Creator<T> create) {
-        return (T) parcelableMap.get(key);
+    public <T> T get(String key) {
+        return (T) objectMap.get(key);
     }
 
     @Override
@@ -51,17 +36,13 @@ class MemoryCacheManager implements CacheManager {
 
     @Override
     public void evict(String key) {
-        if (serializableMap.containsKey(key)) {
-            serializableMap.remove(key);
-        }
-        if (parcelableMap.containsKey(key)) {
-            parcelableMap.remove(key);
+        if (objectMap.containsKey(key)) {
+            objectMap.remove(key);
         }
     }
 
     @Override
     public void evictAll() {
-        serializableMap.clear();
-        parcelableMap.clear();
+        objectMap.clear();
     }
 }

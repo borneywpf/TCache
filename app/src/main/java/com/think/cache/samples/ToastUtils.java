@@ -1,7 +1,6 @@
 package com.think.cache.samples;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -9,13 +8,7 @@ import android.widget.Toast;
  */
 
 public class ToastUtils {
-    private static Toast sToast;
     public static void toast(Context context, String msg) {
-        if (sToast == null || sToast.getView().getVisibility() != View.VISIBLE) {
-            sToast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
-            sToast.show();
-        } else {
-            sToast.setText(msg);
-        }
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 }

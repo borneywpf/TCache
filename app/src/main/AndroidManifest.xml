@@ -15,8 +15,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".serializable.SerializableActivity"/>
-        <activity android:name=".parcelable.ParcelableActivity"/>
+        <activity android:name=".string.StringActivity"/>
+        <activity android:name=".json.JsonActivity"/>
+        <activity android:name=".collection.CollectionActivity"/>
+        <activity android:name=".other.BitmapActivity"/>
         <activity android:name=".custom.CustomActivity"/>
     </application>
 

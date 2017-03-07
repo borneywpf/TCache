@@ -1,4 +1,4 @@
-package com.think.cache.samples.parcelable;
+package com.think.cache.samples.other;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,22 +13,22 @@ import com.think.cache.samples.R;
  * Created by borney on 3/6/17.
  */
 
-public class ParcelableActivity extends AppCompatActivity {
+public class BitmapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_parcelable);
+        setContentView(R.layout.activity_bitmap);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(false);
 
-        ParcelableFragment tasksFragment =
-                (ParcelableFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        BitmapFragment tasksFragment =
+                (BitmapFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
             // Create the fragment
-            tasksFragment = ParcelableFragment.instance();
+            tasksFragment = BitmapFragment.instance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.contentFrame, tasksFragment);
             transaction.commit();

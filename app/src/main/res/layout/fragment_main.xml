@@ -5,16 +5,28 @@
               android:orientation="vertical">
 
     <Button
-        android:id="@+id/serializable"
+        android:id="@+id/string"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Serializable数据缓存"/>
+        android:text="String数据缓存"/>
 
     <Button
-        android:id="@+id/parcelable"
+        android:id="@+id/other"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Parcelable数据缓存"/>
+        android:text="其他数据缓存"/>
+
+    <Button
+        android:id="@+id/json"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="缓存json数据"/>
+
+    <Button
+        android:id="@+id/collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="缓存列表数据"/>
 
     <Button
         android:id="@+id/custom"

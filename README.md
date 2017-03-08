@@ -2,7 +2,9 @@
 
 TCache是一个封装的Android缓存框架,使用具有很大的灵活性,下面将介绍该框架的使用方法和设计思想  
 ![TCacheSamples](png/tcache.gif)
+
 ## TCache使用方法
+
   获得TCache对象,默认是存储在 **context.getCacheDir()** 的 **tcache** 目录下的.  
   - 可以通过String类型的key缓存你想要缓存的数据,如Bitmap,JSONObject,String,byte[]等等.  
   - 可以获得对应key缓存的数据是否过期
@@ -11,6 +13,7 @@ TCache是一个封装的Android缓存框架,使用具有很大的灵活性,下�
   - 可以通过自定义的对象字节转换器,缓存你想缓存的对象数据,如Samples中缓存Intent
 
 ## TCache获取方法和接口介绍
+
 - 1.获取TCache
 ``` java
   //通过Context获取对象
@@ -79,7 +82,6 @@ public interface ByteMapper<T> {
 ```
 
 ## TCache的设计思想
-  
   **缓存目录管理** TCache采用分目录管理的方式管理不同位置的缓存,比如默认的tcache目录,tcache默认的缓存空间是50M,默认的缓存文件数量是500个,生命是不限的.TCache可以同时管理多个相对缓存目录,这些目录和tcache目录的性质是一样的.
   **数据如何持久存储** TCache会将指定key的数据用一个目录层文件的方式换出起来
   **如何缓存任意数据** 如何缓存任一数据,因为任何数据在计算机上都是以字节的形式存储的,因此TCache设计了字节对象转换器,这样用户就可以自己扩展自己想存储的数据了,比如Samples中的Intent对象.

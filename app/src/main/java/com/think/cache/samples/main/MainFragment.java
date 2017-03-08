@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.think.cache.samples.R;
 import com.think.cache.samples.custom.CustomActivity;
 import com.think.cache.samples.json.JsonActivity;
-import com.think.cache.samples.other.BitmapActivity;
+import com.think.cache.samples.bitmap.BitmapActivity;
 import com.think.cache.samples.string.StringActivity;
 
 /**

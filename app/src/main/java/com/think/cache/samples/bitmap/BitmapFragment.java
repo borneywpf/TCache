@@ -1,4 +1,4 @@
-package com.think.cache.samples.other;
+package com.think.cache.samples.bitmap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -99,7 +99,6 @@ public class BitmapFragment extends Fragment implements View.OnClickListener {
                 try {
                     String key = mKey.getText().toString();
                     Bitmap bitmap = BitmapFactory.decodeStream(getContext().getAssets().open("timg.jpg"));
-                    Log.d(TAG, "bitmap = " + bitmap);
                     mTCache.putBitmap(key, bitmap);
                     e.onComplete();
                 } catch (IOException ex) {

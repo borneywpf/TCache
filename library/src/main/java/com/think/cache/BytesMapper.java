@@ -4,7 +4,7 @@ package com.think.cache;
  * Created by borney on 3/8/17.
  */
 
-class BytesMapper implements ByteMapper<byte[]> {
+public class BytesMapper implements ByteMapper<byte[]> {
 
     BytesMapper() {
 

@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
  * Created by borney on 3/7/17.
  */
 
-class BitmapByteMapper implements ByteMapper<Bitmap> {
+public class BitmapByteMapper implements ByteMapper<Bitmap> {
 
     BitmapByteMapper() {
         

@@ -18,7 +18,7 @@
         <activity android:name=".string.StringActivity"/>
         <activity android:name=".json.JsonActivity"/>
         <activity android:name=".collection.CollectionActivity"/>
-        <activity android:name=".other.BitmapActivity"/>
+        <activity android:name=".bitmap.BitmapActivity"/>
         <activity android:name=".custom.CustomActivity"/>
     </application>
 

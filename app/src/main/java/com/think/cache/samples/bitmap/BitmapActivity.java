@@ -1,4 +1,4 @@
-package com.think.cache.samples.other;
+package com.think.cache.samples.bitmap;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

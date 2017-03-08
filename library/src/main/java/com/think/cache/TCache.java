@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Iterator;
@@ -15,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by borney on 3/1/17.
  */
 
-public class TCache implements CacheManager {
+public final class TCache implements CacheManager {
     private static final int DEFAULT_MAX_DISK_SPACE = 50 * 1024 * 1024;
     private static final int DEFAULT_MAX_DISK_FILE_COUNT = 500;
     private String cacheDir;
@@ -77,27 +80,47 @@ public class TCache implements CacheManager {
     }
 
     @Override
-    public <T extends Bitmap> void putBitmap(String key, T bitmap) {
-        putByteMapper(key, bitmap, new BitmapByteMapper<T>());
+    public void putBytes(String key, byte[] bytes) {
+        putByteMapper(key, bytes, new BytesMapper());
     }
 
     @Override
-    public <T extends Bitmap> T getBitmap(String key) {
-        return getByteMapper(key, new BitmapByteMapper<T>());
+    public byte[] getBytes(String key) {
+        return getByteMapper(key, new BytesMapper());
+    }
+
+    @Override
+    public void putBitmap(String key, Bitmap bitmap) {
+        putByteMapper(key, bitmap, new BitmapByteMapper());
+    }
+
+    @Override
+    public Bitmap getBitmap(String key) {
+        return getByteMapper(key, new BitmapByteMapper());
     }
 
     @Override
     public <T extends Serializable> void putSerializable(String key, T obj) {
-        putByteMapper(key, obj, new SerializableByteMapper<T>());
+        putByteMapper(key, obj, new SerializableByteMapper());
     }
 
     @Override
     public <T extends Serializable> T getSerializable(String key) {
-        return getByteMapper(key, new SerializableByteMapper<T>());
+        return (T) getByteMapper(key, new SerializableByteMapper());
     }
 
     @Override
-    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
+    public void putJSONObject(String key, JSONObject obj) {
+        putSerializable(key, obj.toString());
+    }
+
+    @Override
+    public JSONObject getJSONObject(String key) throws JSONException {
+        return new JSONObject((String) getSerializable(key));
+    }
+
+    @Override
+    public <T> void putByteMapper(String key, T obj, ByteMapper<T> mapper) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("Can not operate in the main thread !!!");
         }

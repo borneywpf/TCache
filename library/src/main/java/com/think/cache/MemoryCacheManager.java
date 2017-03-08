@@ -15,7 +15,7 @@ class MemoryCacheManager implements Cache {
     }
 
     @Override
-    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
+    public <T> void putByteMapper(String key, T obj, ByteMapper<T> mapper) {
         bytesMap.put(key, mapper.getBytes(obj));
     }
 

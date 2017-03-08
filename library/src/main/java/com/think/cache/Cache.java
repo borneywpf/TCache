@@ -4,22 +4,22 @@ package com.think.cache;
  * Created by borney on 3/7/17.
  */
 
-public interface Cache {
+interface Cache {
     /**
      * putByteMapper a object to cache
      *
      * @param key    存储对象文件的相对名称,可以是目录树
-     * @param mapper 要存储的对象
+     * @param mapper 存储的对象的转换器
      * @param <T>    要存储的对象
      */
-    <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper);
+    <T> void putByteMapper(String key, T obj, ByteMapper<T> mapper);
 
     /**
      * get a object from cache
      *
      * @param key 存储对象文件的相对名称,可以是目录树
-     * @param <T> 对象
-     * @return 对象
+     * @param <T> 存储的对象的转换器
+     * @return 存储的对象
      */
     <T> T getByteMapper(String key, ByteMapper<T> mapper);
 

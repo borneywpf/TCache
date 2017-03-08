@@ -31,7 +31,7 @@ class FileManager {
         checkNotNull(content);
         Log.d("TCache", "content:" + content.length);
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(content.length);
             FileChannel channel = fos.getChannel();
             buffer.put(content);
             buffer.flip();

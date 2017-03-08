@@ -15,14 +15,14 @@ import java.io.Serializable;
  */
 
 @SuppressLint("NewApi")
-class SerializableByteMapper<T extends Serializable> implements ByteMapper<T> {
+class SerializableByteMapper implements ByteMapper<Serializable> {
 
 
     SerializableByteMapper() {
     }
 
     @Override
-    public byte[] getBytes(T obj) {
+    public byte[] getBytes(Serializable obj) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutput out = new ObjectOutputStream(bos)) {
             out.writeObject(obj);
@@ -34,10 +34,10 @@ class SerializableByteMapper<T extends Serializable> implements ByteMapper<T> {
     }
 
     @Override
-    public T getObject(byte[] bytes) {
+    public Serializable getObject(byte[] bytes) {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
              ObjectInputStream ois = new ObjectInputStream(bis)) {
-            return (T) ois.readObject();
+            return (Serializable) ois.readObject();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

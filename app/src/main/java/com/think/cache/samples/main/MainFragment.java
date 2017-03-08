@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.think.cache.samples.R;
-import com.think.cache.samples.collection.CollectionActivity;
 import com.think.cache.samples.custom.CustomActivity;
 import com.think.cache.samples.json.JsonActivity;
 import com.think.cache.samples.other.BitmapActivity;
@@ -34,7 +33,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         view.findViewById(R.id.string).setOnClickListener(this);
         view.findViewById(R.id.json).setOnClickListener(this);
-        view.findViewById(R.id.collection).setOnClickListener(this);
         view.findViewById(R.id.other).setOnClickListener(this);
         view.findViewById(R.id.custom).setOnClickListener(this);
         return view;
@@ -49,9 +47,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.json:
                 context.startActivity(new Intent(context, JsonActivity.class));
-                break;
-            case R.id.collection:
-                context.startActivity(new Intent(context, CollectionActivity.class));
                 break;
             case R.id.other:
                 context.startActivity(new Intent(context, BitmapActivity.class));

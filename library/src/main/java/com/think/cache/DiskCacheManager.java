@@ -26,7 +26,7 @@ class DiskCacheManager implements Cache {
     }
 
     @Override
-    public <T, M extends ByteMapper<T>> void putByteMapper(String key, T obj, M mapper) {
+    public <T> void putByteMapper(String key, T obj, ByteMapper<T> mapper) {
         //ensure total file count and space
         byte[] bytes = mapper.getBytes(obj);
         ensureTotalCount();

@@ -114,7 +114,7 @@ public class JsonFragment extends Fragment implements View.OnClickListener {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
                 String key = mKey.getText().toString();
-                mTCache.put(key, mPutObject);
+                mTCache.putJSONObject(key, mPutObject);
                 e.onComplete();
             }
         }).subscribeOn(Schedulers.io())
@@ -124,8 +124,12 @@ public class JsonFragment extends Fragment implements View.OnClickListener {
 
     private void get() {
         String key = mKey.getText().toString();
-        JSONObject cacheData = mTCache.get(key);
-        mCacheData.setText(cacheData.toString());
+        try {
+            JSONObject cacheData = mTCache.getJSONObject(key);
+            mCacheData.setText(cacheData.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private class Person {

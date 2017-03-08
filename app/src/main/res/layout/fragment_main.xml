@@ -14,19 +14,13 @@
         android:id="@+id/other"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="其他数据缓存"/>
+        android:text="缓存Bitmap"/>
 
     <Button
         android:id="@+id/json"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="缓存json数据"/>
-
-    <Button
-        android:id="@+id/collection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="缓存列表数据"/>
 
     <Button
         android:id="@+id/custom"

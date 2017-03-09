@@ -65,8 +65,9 @@ public final class TCache implements CacheManager {
                 defCacheAge);
         if (cache.memoryCacheManager != null) {
             cache.evictAll();
+        } else {
+            cache.memoryCacheManager = new MemoryCacheManager();
         }
-        cache.memoryCacheManager = new MemoryCacheManager();
         return cache;
     }
 

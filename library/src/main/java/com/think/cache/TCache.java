@@ -19,8 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public final class TCache implements CacheManager {
-    private static final int DEFAULT_MAX_DISK_SPACE = 50 * 1024 * 1024;
-    private static final int DEFAULT_MAX_DISK_FILE_COUNT = 500;
+    /**
+     * 默认硬盘缓存存储空间大小
+     */
+    public static final int DEFAULT_MAX_DISK_SPACE = 10 * 1024 * 1024;
+    /**
+     * 默认硬盘缓存存储空间文件最多个数
+     */
+    public static final int DEFAULT_MAX_DISK_FILE_COUNT = 100;
     private String cacheDir;
     private Cache diskCacheManager;
     private Cache memoryCacheManager;
@@ -45,9 +51,7 @@ public final class TCache implements CacheManager {
 
     public static TCache get(Context context, String relativeCacheDir, int maxDiskTotalCount,
             int maxDiskTotalSpace, int defCacheAge) {
-        if (context == null) {
-            throw new NullPointerException("context is null");
-        }
+        Optional.checkNotNull(context, "context is null !!!");
         checkDirArgument(relativeCacheDir, "relativeCacheDir");
         String cacheDir = context.getCacheDir().getPath() + File.separator + relativeCacheDir;
         return getCacheManager(cacheDir, maxDiskTotalCount, maxDiskTotalSpace,
@@ -82,6 +86,7 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putBytes(String key, byte[] bytes) {
+        Optional.checkNotNull(bytes, "byte array is null !!!");
         putByteMapper(key, bytes, new BytesMapper());
     }
 
@@ -92,6 +97,7 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putBitmap(String key, Bitmap bitmap) {
+        Optional.checkNotNull(bitmap, "Bitmap is null !!!");
         putByteMapper(key, bitmap, new BitmapByteMapper());
     }
 
@@ -102,6 +108,7 @@ public final class TCache implements CacheManager {
 
     @Override
     public <T extends Serializable> void putSerializable(String key, T obj) {
+        Optional.checkNotNull(obj, "Serializable is null !!!");
         putByteMapper(key, obj, new SerializableByteMapper());
     }
 
@@ -112,6 +119,7 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putJSONObject(String key, JSONObject obj) {
+        Optional.checkNotNull(obj, "JSONObject is null !!!");
         putSerializable(key, obj.toString());
     }
 
@@ -127,7 +135,6 @@ public final class TCache implements CacheManager {
         }
         String k = absoluteKey(key);
         diskCacheManager.putByteMapper(k, obj, mapper);
-        memoryCacheManager.evictAll();
         memoryCacheManager.putByteMapper(k, obj, mapper);
     }
 
@@ -167,15 +174,34 @@ public final class TCache implements CacheManager {
         memoryCacheManager.evictAll();
     }
 
+    @Override
+    public boolean isCached(String key) {
+        return memoryCacheManager.isCached(key) || diskCacheManager.isCached(key);
+    }
+
     /**
-     * recycle cache manager and memory cache
+     * recycle current cache manager and memory cache
      */
+    @SuppressWarnings("unused")
     public void recycle() {
+        memoryCacheManager.evictAll();
+        T_CACHE_MAP.remove(cacheDir);
+        memoryCacheManager = null;
+        diskCacheManager = null;
+    }
+
+    /**
+     * recycle all tcache
+     */
+    @SuppressWarnings("unused")
+    public static void recycleAll() {
         Iterator<TCache> iterator = T_CACHE_MAP.values().iterator();
         while (iterator.hasNext()) {
             TCache cache = iterator.next();
             cache.memoryCacheManager.evictAll();
             iterator.remove();
+            cache.memoryCacheManager = null;
+            cache.diskCacheManager = null;
         }
     }
 

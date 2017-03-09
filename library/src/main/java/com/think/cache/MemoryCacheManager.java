@@ -45,4 +45,9 @@ class MemoryCacheManager implements Cache {
     public void evictAll() {
         bytesMap.clear();
     }
+
+    @Override
+    public boolean isCached(String key) {
+        return bytesMap.containsKey(key);
+    }
 }

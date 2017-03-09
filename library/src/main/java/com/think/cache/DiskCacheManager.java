@@ -73,6 +73,12 @@ class DiskCacheManager implements Cache {
         fileManager.deleFile(new File(cacheDir));
     }
 
+    @Override
+    public boolean isCached(String key) {
+        File file = buildFile(key);
+        return file.exists() && file.length() != 0;
+    }
+
     private void ensureTotalSpace(byte[] bytes) {
         int objSize = bytes.length;
         File file = new File(cacheDir);

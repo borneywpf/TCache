@@ -49,4 +49,12 @@ interface Cache {
      * 清除所有缓存
      */
     void evictAll();
+
+    /**
+     * 是否缓存了key对应的数据
+     *
+     * @param key
+     * @return
+     */
+    boolean isCached(String key);
 }

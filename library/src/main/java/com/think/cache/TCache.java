@@ -86,7 +86,6 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putBytes(String key, byte[] bytes) {
-        Optional.checkNotNull(bytes, "byte array is null !!!");
         putByteMapper(key, bytes, new BytesMapper());
     }
 
@@ -97,7 +96,6 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putBitmap(String key, Bitmap bitmap) {
-        Optional.checkNotNull(bitmap, "Bitmap is null !!!");
         putByteMapper(key, bitmap, new BitmapByteMapper());
     }
 
@@ -108,7 +106,6 @@ public final class TCache implements CacheManager {
 
     @Override
     public <T extends Serializable> void putSerializable(String key, T obj) {
-        Optional.checkNotNull(obj, "Serializable is null !!!");
         putByteMapper(key, obj, new SerializableByteMapper());
     }
 
@@ -119,7 +116,6 @@ public final class TCache implements CacheManager {
 
     @Override
     public void putJSONObject(String key, JSONObject obj) {
-        Optional.checkNotNull(obj, "JSONObject is null !!!");
         putSerializable(key, obj.toString());
     }
 
@@ -133,6 +129,8 @@ public final class TCache implements CacheManager {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("Can not operate in the main thread !!!");
         }
+        Optional.checkNotNull(obj, "obj is null !!!");
+        Optional.checkNotNull(mapper, "mapper is null !!!");
         String k = absoluteKey(key);
         diskCacheManager.putByteMapper(k, obj, mapper);
         memoryCacheManager.putByteMapper(k, obj, mapper);

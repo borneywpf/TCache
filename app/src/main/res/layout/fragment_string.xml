@@ -37,6 +37,12 @@
         android:hint="缓存的内容"/>
 
     <Button
+        android:id="@+id/iscached"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="是否有key对应的缓存"/>
+
+    <Button
         android:id="@+id/expired"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

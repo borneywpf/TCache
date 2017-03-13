@@ -21,7 +21,10 @@ class MemoryCacheManager implements Cache {
 
     @Override
     public <T> T getByteMapper(String key, ByteMapper<T> mapper) {
-        return mapper.getObject(bytesMap.get(key));
+        if (bytesMap.containsKey(key)) {
+            return mapper.getObject(bytesMap.get(key));
+        }
+        return null;
     }
 
     @Override

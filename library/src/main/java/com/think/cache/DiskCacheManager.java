@@ -18,6 +18,15 @@ class DiskCacheManager implements Cache {
 
     DiskCacheManager(FileManager fileManager, String cacheDir, int maxCount, int maxSpace,
             long age) {
+        if (maxCount <= 0) {
+            throw new IllegalArgumentException("maxCount must > 0");
+        }
+        if (maxSpace <= 0) {
+            throw new IllegalArgumentException("maxSpace must > 0");
+        }
+        if (age < 0) {
+            throw new IllegalArgumentException("age must >= 0");
+        }
         this.fileManager = fileManager;
         this.cacheDir = cacheDir;
         this.maxCount = maxCount;
@@ -46,9 +55,11 @@ class DiskCacheManager implements Cache {
     @Override
     public <T> T getByteMapper(String key, ByteMapper<T> mapper) {
         File file = buildFile(key);
-
-        byte[] bytes = fileManager.readBytes(file);
-        return mapper.getObject(bytes);
+        if (file.exists()) {
+            byte[] bytes = fileManager.readBytes(file);
+            return mapper.getObject(bytes);
+        }
+        return null;
     }
 
     @Override
@@ -76,7 +87,7 @@ class DiskCacheManager implements Cache {
     @Override
     public boolean isCached(String key) {
         File file = buildFile(key);
-        return file.exists() && file.length() != 0;
+        return file.exists() && fileManager.calFileSize(file) != 0;
     }
 
     private void ensureTotalSpace(byte[] bytes) {

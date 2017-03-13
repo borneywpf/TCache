@@ -84,7 +84,21 @@ class FileManager {
     }
 
     public long calFileSize(File file) {
-        return file.length();
+        if (file.isDirectory()) {
+            long length = 0;
+            File[] files = file.listFiles();
+            for (File f : files) {
+                if (f.isFile()) {
+                    length += f.length();
+                } else {
+                    length += calFileSize(f);
+                }
+            }
+            return length;
+        } else {
+            return file.length();
+        }
+
     }
 
     public int calFileCount(File file) {

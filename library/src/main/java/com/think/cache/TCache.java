@@ -174,7 +174,8 @@ public final class TCache implements CacheManager {
 
     @Override
     public boolean isCached(String key) {
-        return memoryCacheManager.isCached(key) || diskCacheManager.isCached(key);
+        String k = absoluteKey(key);
+        return memoryCacheManager.isCached(k) || diskCacheManager.isCached(k);
     }
 
     /**

@@ -52,6 +52,7 @@ public class StringFragment extends Fragment implements View.OnClickListener {
         v.findViewById(R.id.put).setOnClickListener(this);
         v.findViewById(R.id.get).setOnClickListener(this);
         mCacheData = (TextView) v.findViewById(R.id.cachedata);
+        v.findViewById(R.id.iscached).setOnClickListener(this);
         v.findViewById(R.id.expired).setOnClickListener(this);
         v.findViewById(R.id.evict).setOnClickListener(this);
         return v;
@@ -66,6 +67,9 @@ public class StringFragment extends Fragment implements View.OnClickListener {
             case R.id.get:
                 get();
                 break;
+            case R.id.iscached:
+                isCached();
+                break;
             case R.id.expired:
                 expired();
                 break;
@@ -76,6 +80,11 @@ public class StringFragment extends Fragment implements View.OnClickListener {
                 break;
         }
 
+    }
+
+    private void isCached() {
+        String key = mKey.getText().toString();
+        ToastUtils.toast(getContext(), "是否缓存:" + key + ":" + mTCache.isCached(key));
     }
 
     private void evict() {

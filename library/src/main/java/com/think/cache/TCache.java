@@ -142,7 +142,9 @@ public final class TCache implements CacheManager {
         T obj = memoryCacheManager.getByteMapper(k, mapper);
         if (obj == null) {
             obj = diskCacheManager.getByteMapper(k, mapper);
-            memoryCacheManager.putByteMapper(k, obj, mapper);
+            if (obj != null) {
+                memoryCacheManager.putByteMapper(k, obj, mapper);
+            }
         }
         return obj;
     }

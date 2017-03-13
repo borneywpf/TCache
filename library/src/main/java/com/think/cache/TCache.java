@@ -68,7 +68,7 @@ public final class TCache implements CacheManager {
                 maxDiskTotalSpace,
                 defCacheAge);
         if (cache.memoryCacheManager != null) {
-            cache.evictAll();
+            cache.memoryCacheManager.evictAll();
         } else {
             cache.memoryCacheManager = new MemoryCacheManager();
         }

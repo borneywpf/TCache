@@ -5,12 +5,12 @@ TCache是一个封装的Android缓存框架,使用具有很大的灵活性,下�
 
 ## TCache使用方法
 
-  获得TCache对象,默认是存储在 **context.getCacheDir()** 的 **tcache** 目录下的.  
-  - 可以通过String类型的key缓存你想要缓存的数据,如Bitmap,JSONObject,String,byte[]等等.  
-  - 可以获得对应key缓存的数据是否过期
-  - 可以清除指定key对应的缓存或清除所有缓存
-  - 可以指定自定义的缓存目录,并管理缓存目录中文件的数量和缓存目录的空间.
-  - 可以通过自定义的对象字节转换器,缓存你想缓存的对象数据,如Samples中缓存Intent
+- 获得TCache对象,默认是存储在 **context.getCacheDir()** 的 **tcache** 目录下的.  
+- 可以通过String类型的key缓存你想要缓存的数据,如Bitmap,JSONObject,String,byte[]等等.  
+- 可以获得对应key缓存的数据是否过期  
+- 可以清除指定key对应的缓存或清除所有缓存  
+- 可以指定自定义的缓存目录,并管理缓存目录中文件的数量和缓存目录的空间.  
+- 可以通过自定义的对象字节转换器,缓存你想缓存的对象数据,如Samples中缓存Intent  
 
 ## TCache获取方法和接口介绍
 
@@ -26,7 +26,7 @@ TCache是一个封装的Android缓存框架,使用具有很大的灵活性,下�
   public static TCache get(Context context, String rootCacheDir, String relativeCacheDir,
               int maxDiskTotalCount, int maxDiskTotalSpace)
   //通过Context,缓存的根目录,缓存的相对目录,存储目录最多文件数,最大缓存目录空间,指定缓存默认失效时间
-  TCache get(Context context, String rootCacheDir, String relativeCacheDir,
+  public static TCache get(Context context, String rootCacheDir, String relativeCacheDir,
               int maxDiskTotalCount, int maxDiskTotalSpace, int defCacheAge)
 ```
 
@@ -82,6 +82,29 @@ public interface ByteMapper<T> {
     byte[] getBytes(T obj);
     //通过字节数组获取对象
     T getObject(byte[] bytes);
+}
+```
+
+- 5.TCache提供了几个默认的字节转换器,如bitmap等
+
+``` java
+public class BitmapByteMapper implements ByteMapper<Bitmap> {
+
+    BitmapByteMapper() {
+        
+    }
+
+    @Override
+    public byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        return bos.toByteArray();
+    }
+
+    @Override
+    public Bitmap getObject(byte[] bytes) {
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
 }
 ```
 

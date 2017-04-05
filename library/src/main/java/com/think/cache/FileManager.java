@@ -1,5 +1,7 @@
 package com.think.cache;
 
+import static com.think.cache.Optional.checkNotNull;
+
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -120,12 +122,5 @@ class FileManager {
         } else {
             files.add(file);
         }
-    }
-
-    private Object checkNotNull(Object object) {
-        if (object == null) {
-            throw new NullPointerException("error:object is null");
-        }
-        return object;
     }
 }

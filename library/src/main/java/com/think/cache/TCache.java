@@ -20,13 +20,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class TCache implements CacheManager {
     /**
-     * 默认硬盘缓存存储空间大小
+     * Default hard disk cache size
      */
     public static final int DEFAULT_MAX_DISK_SPACE = 10 * 1024 * 1024;
     /**
-     * 默认硬盘缓存存储空间文件最多个数
+     * Default hard disk cache the maximum number of storage space files
      */
     public static final int DEFAULT_MAX_DISK_FILE_COUNT = 100;
+    private static final String RELATIVE_CACHE_DIR = "tcache";
     private String cacheDir;
     private Cache diskCacheManager;
     private Cache memoryCacheManager;
@@ -36,24 +37,31 @@ public final class TCache implements CacheManager {
     }
 
     public static TCache get(Context context) {
-        return get(context, "tcache");
+        return get(context, context.getCacheDir().getPath());
     }
 
-    public static TCache get(Context context, String relativeCacheDir) {
-        return get(context, relativeCacheDir, DEFAULT_MAX_DISK_FILE_COUNT, DEFAULT_MAX_DISK_SPACE);
+    public static TCache get(Context context, String rootCacheDir) {
+        return get(context, rootCacheDir, RELATIVE_CACHE_DIR);
     }
 
-    public static TCache get(Context context, String relativeCacheDir, int maxDiskTotalCount,
+    public static TCache get(Context context, String rootCacheDir, String relativeCacheDir) {
+        return get(context, rootCacheDir, relativeCacheDir, DEFAULT_MAX_DISK_FILE_COUNT,
+                DEFAULT_MAX_DISK_SPACE);
+    }
+
+    public static TCache get(Context context, String rootCacheDir, String relativeCacheDir,
+            int maxDiskTotalCount,
             int maxDiskTotalSpace) {
-        return get(context, relativeCacheDir, maxDiskTotalCount, maxDiskTotalSpace,
+        return get(context, rootCacheDir, relativeCacheDir, maxDiskTotalCount, maxDiskTotalSpace,
                 Integer.MAX_VALUE);
     }
 
-    public static TCache get(Context context, String relativeCacheDir, int maxDiskTotalCount,
+    public static TCache get(Context context, String rootCacheDir, String relativeCacheDir,
+            int maxDiskTotalCount,
             int maxDiskTotalSpace, int defCacheAge) {
         Optional.checkNotNull(context, "context is null !!!");
         checkDirArgument(relativeCacheDir, "relativeCacheDir");
-        String cacheDir = context.getCacheDir().getPath() + File.separator + relativeCacheDir;
+        String cacheDir = rootCacheDir + File.separator + relativeCacheDir;
         return getCacheManager(cacheDir, maxDiskTotalCount, maxDiskTotalSpace,
                 defCacheAge);
     }
